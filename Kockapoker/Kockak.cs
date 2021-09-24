@@ -10,11 +10,16 @@ namespace Kockapoker
   {
     int[] ertekek = new int[5];
     Dictionary<int, int> minta = new Dictionary<int, int>();
+    public int Pontertek { get; set; }
+
     public void Dobas()
     {
       Feltolt();
     } 
 
+    /// <summary>
+    /// 5 db véletlen szám az értékek tömbben
+    /// </summary>
     private void Feltolt()
     {
       Random vel = new Random(Guid.NewGuid().GetHashCode());
@@ -24,6 +29,10 @@ namespace Kockapoker
       }
 
     }
+    /// <summary>
+    /// A dobás pontértékét egész számként adja vissza
+    /// </summary>
+    /// <returns></returns>
     public int Ertek()
     {
       KiErtekel();
@@ -31,9 +40,13 @@ namespace Kockapoker
       {
         Console.WriteLine($"{m.Key}:{m.Value}");
       }
-      return 0;
+      return Pontertek;
     }
     
+    /// <summary>
+    /// Statisztikát készít melyik számból hány van
+    /// Ha nem fordul elő a szám akkor nem szerepel a dict-ben
+    /// </summary>
     private void Csoportosit()
     {
       foreach (var e in ertekek)
@@ -48,9 +61,13 @@ namespace Kockapoker
         }
       }
     }
+    /// <summary>
+    /// Egy darab előfordulásokt kiveszi a dict-ből.
+    /// </summary>
     private void Egyszerusit()
     {
       List<int> egyesek = new List<int>();
+
       foreach (var m in minta)
       {
         if (m.Value == 1)
@@ -63,18 +80,93 @@ namespace Kockapoker
         minta.Remove(e);
       }
     }
+    /// <summary>
+    /// Elvégzi a dobás kiértékelését.
+    /// </summary>
     private void KiErtekel()
     {
       Csoportosit();
-      Egyszerusit();
+      if (HaOtKulonbozo())
+      {
+        KissorNagysorSemmi();
+      }
+      else
+      {
+        Egyszerusit();
+        //1 pár, 3 egyforma, 4 egyforma, 5 egyforma
+        if (minta.Count == 1)
+        {
+          int melyik = 0;
+          int darab = 0;
+          foreach (var m in minta)
+          {
+            melyik = m.Key;
+            darab = m.Value;
+          }
+          switch (darab)
+          {
+            case 2:
+              Pontertek = melyik;
+              break;
+            case 3:
+              Pontertek = 30 + melyik;
+              break;
+            case 4:
+              Pontertek = 40 + melyik;
+              break;
+            case 5:
+              Pontertek = 1000 + melyik;
+              break;
+            
+              
+          }
+
+        }
+        //2 pár, full
+        else
+        {
+
+        }
+      }
     }
 
+    private bool HaOtKulonbozo()
+    {
+      return minta.Count == 5;
+    }
+
+    /// <summary>
+    /// Kissor, nagysor, semmi értékét állítja be.
+    /// </summary>
+    private void KissorNagysorSemmi()
+    {
+      if (ertekek[0] == 1 && ertekek[4] == 5)
+      {
+        Pontertek = 100;
+      }
+      else if (ertekek[0] == 2 && ertekek[4] == 6)
+      {
+        Pontertek = 200;
+      }
+      else
+      {
+        Pontertek = 0;
+      }
+    }
+
+    /// <summary>
+    /// Dobást visszadja szövegesen összefűzve.
+    /// pl. 1-1-2-3-3
+    /// </summary>
+    /// <returns></returns>
     public string ErtekSzoveg()
     {
       Sorrendbe();
       return String.Join("-", ertekek);
     }
-
+    /// <summary>
+    /// Növekvő Sorrendbe rakja a dobásokat (ertekek tömb)
+    /// </summary>
     private void Sorrendbe()
     {
       for (int i = 0; i < ertekek.Length-1; i++)
