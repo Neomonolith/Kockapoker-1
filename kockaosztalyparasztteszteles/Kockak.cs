@@ -4,13 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kockapoker
+namespace kockaosztalyparasztteszteles
 {
   class Kockak
   {
     int[] ertekek = new int[5];
     Dictionary<int, int> minta = new Dictionary<int, int>();
     public int PontErtek { get; set; }
+
+    public Kockak()
+    {
+    }
+
+    public Kockak(int[] ertekek)
+    {
+      this.ertekek = ertekek;
+    }
+
     public void Dobas()
     {
       Feltolt();
